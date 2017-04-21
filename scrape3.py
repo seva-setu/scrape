@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Apr  8 09:49:02 2017
-
+Webpage being scraped: https://india.gov.in/my-government/schemes
 @author: satejwagle
 """
 
