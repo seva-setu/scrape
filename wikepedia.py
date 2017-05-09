@@ -13,7 +13,7 @@ soup = BeautifulSoup(page,"html.parser")
 
 
 data = {
-	'title' : [],
+	'_title' : [],
     'link' : [],
     'detail' : [],
     'ministry' : [],
@@ -24,6 +24,7 @@ data = {
 table = soup.find("table", { "class" : "wikitable sortable" })
 
 
+
 for row in table.findAll("tr"):
     cells = row.findAll("td")
     #For each "tr", assign each "td" to a variable.
@@ -32,13 +33,15 @@ for row in table.findAll("tr"):
     	links_res = cells[0].findAll('a', href=True)
     	for res in links_res:
     		link = "https://en.wikepedia.org" + res.get('href')
+            if '#' in link:
+                link = ''
 
     	title = cells[0].find(text=True) 
     	ministry = cells[1].find(text=True)
     	sector = cells[4].find(text=True)   #to be added under benefits column
     	detail = cells[5].find(text=True)
-    	
-    	data['title'].append(title)
+
+    	data['_title'].append(title)
     	data['link'].append(link)
     	data['detail'].append(detail)
     	data['ministry'].append(ministry)
