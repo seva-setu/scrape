@@ -7,14 +7,14 @@ from lxml import etree
 url = "https://www.sarkariyojna.co.in/complete-list-schemes-launched-pm-narendra-modi/"
 header = {'User-Agent': 'Mozilla/5.0'}
 
-obj = open("sarkariyojna.txt","w")
+obj = open("sarkariyojna.csv","w")
 
 data = {
-	'_title' : [],
+	'title' : [],
     'link' : [],
     'detail' : [],
-    'ministry' : [],
-    'sector' : []
+    # 'ministry' : [],
+    # 'sector' : []
 }
 
 header = {
@@ -33,18 +33,51 @@ content = ''
 
 soup = BeautifulSoup(response, "lxml")
 articles = soup.find('article',id='post-154')
-#for article in articles:
-r2 = articles.find('div',class_='entry')
+entry_list = articles.find('div',class_='entry')
 
 
-result = r2.findAll("p")
+##for fetching the title
+title_list = []
+for element in entry_list.select('h3'):
+	soup = BeautifulSoup(element.get_text(),"lxml")
+	title_list.append(soup.find('p').get_text())
 
+title_list = title_list[0:-61]
+# print(len(title_result))
 
-for z in result:
-	rx = z.findAll('strong')
+result = []
+for element in entry_list.select('p'):
+	if element.strong != None:
+		result.append(element)
 
+result = result[1:]
 
-obj.write(str(result))
-# obj.write(str(result))
-# obj.write(str(content))
-obj.close()
+## for the detail list
+detail_list = []
+# print(len(result))
+for x in range(0,len(result),2):
+	sentence = str(result[x])
+	index = sentence.rfind("</strong>") + 10
+	detail_list.append(sentence[index:-4].strip())
+
+# print(len(detail_list))
+
+##for the website link
+link_list = []
+for x in range(1,len(result),2):
+	sentence = str(result[x])
+	index = sentence.rfind("</strong>") + 10
+	link_list.append(sentence[index:-4].strip())
+
+# print(len(link_list))
+
+data['title'] = title_list
+data['detail'] = detail_list
+data['link'] = link_list
+
+print(len(data['title']))
+print(len(data['detail']))
+print(len(data['link']))
+
+dogData = pd.DataFrame( data )
+dogData.to_csv("sarkariyojna.csv")
