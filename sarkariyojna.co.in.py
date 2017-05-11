@@ -1,13 +1,13 @@
 from urllib.request import Request,urlopen
 from bs4 import BeautifulSoup
-import csv	
+import csv
 import pandas as pd
 from lxml import etree
 
 url = "https://www.sarkariyojna.co.in/complete-list-schemes-launched-pm-narendra-modi/"
 header = {'User-Agent': 'Mozilla/5.0'}
 
-obj = open("temp.html","w")
+obj = open("sarkariyojna.txt","w")
 
 data = {
 	'_title' : [],
@@ -25,22 +25,26 @@ header = {
 	"Connection" : "close"
 }
 
-#post-154 > div.entry > p:nth-child(8)
 
 q = Request(url,headers=header)
 response = urlopen(q)
-#htmlparser = etree.HTMLParser()
+
+content = ''
 
 soup = BeautifulSoup(response, "lxml")
-content = soup.select("#post-154 .entry > p:nth-of-type(8)")
-content2 = soup.select("#post-154 .entry > p:nth-of-type(7) + strong:nth-of-type(3)")
+articles = soup.find('article',id='post-154')
+#for article in articles:
+r2 = articles.find('div',class_='entry')
 
 
-#content2 = content.find("div",{"class":"entry"})
-print(content2)
-obj.write(str(content))
+result = r2.findAll("p")
+
+
+for z in result:
+	rx = z.findAll('strong')
+
+
+obj.write(str(result))
+# obj.write(str(result))
+# obj.write(str(content))
 obj.close()
-
-
-# /html/body/div[4]/div[1]/main/section/article/div[3]/h3[3]
-# /html/body/div[4]/div[1]/main/section/article/div[3]/p[16]

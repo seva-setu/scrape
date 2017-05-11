@@ -13,7 +13,7 @@ soup = BeautifulSoup(page,"html.parser")
 
 
 data = {
-	'_title' : [],
+	'title' : [],
     'link' : [],
     'detail' : [],
     'ministry' : [],
@@ -41,7 +41,7 @@ for row in table.findAll("tr"):
 		detail = cells[5].find(text=True)
 
 
-		data['_title'].append(title)
+		data['title'].append(title)
 		data['link'].append(link)
 		data['detail'].append(detail)
 		data['ministry'].append(ministry)
