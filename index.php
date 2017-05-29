@@ -78,66 +78,84 @@
     </table>
   </div>  
   <?php
+    function get_all_counts($data){
+      for($i=0; $i<count($data); $i++)
+        if($data[$i][2] == '' and $data[$i][3] == '')
+          break;
+      return ($i+1);
+    }
+    
+    function get_counts($data, $index, $max_count){
+      $count    = 0;
+      for($i=0; $i<$max_count; $i++){
+        if($data[$i][$index] != '')
+          $count += 1;
+      }
+      return $count;
+    }
+    
+    function get_csv_content($spreadsheet_url){
+      if(!ini_set('default_socket_timeout', 15)) 
+      echo "<!-- unable to change socket timeout -->";
+      if (($handle = fopen($spreadsheet_url, "r")) !== FALSE) {
+        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+          $spreadsheet_data[] = $data;
+        }
+        fclose($handle);
+        return $spreadsheet_data;
+      }
+    }
+    
+    function validate_data($data){
+      return true;
+    }
+
     $dataURI = "https://docs.google.com/spreadsheets/d/1nbx2ENfcXSXe1aUB4n4LsMsj0CMVWtrUadG7MI-Fz9I/pub?gid=407297767&single=true&output=csv";
     $data = get_csv_content($dataURI);
     $is_valid = validate_data($data);
   
-  $data_to_publish = array(1014, 817, 93, 6);
-  
-  if($is_valid){
-    $all_count = get_all_counts($data);
+    $data_to_publish = array(1014, 817, 93, 6);
     
-    $data_to_publish[0] = $all_count;
-    $data_to_publish[1] = get_counts($data, 4, $all_count);
-    $data_to_publish[2] = get_counts($data, 5, $all_count);
-    //$data_to_publish[3] = get_counts($data, 6, $all_count);
-  }
-  
-  function get_all_counts($data){
-    for($i=0; $i<count($data); $i++)
-      if($data[$i][2] == '' and $data[$i][3] == '')
-        break;
-    return ($i+1);
-  }
-  
-  function get_counts($data, $index, $max_count){
-    $count    = 0;
-    for($i=0; $i<$max_count; $i++){
-      if($data[$i][$index] != '')
-        $count += 1;
+    if($is_valid){
+      $all_count = get_all_counts($data);
+      
+      $data_to_publish[0] = $all_count;
+      $data_to_publish[1] = get_counts($data, 4, $all_count);
+      $data_to_publish[2] = get_counts($data, 5, $all_count);
+      //$data_to_publish[3] = get_counts($data, 6, $all_count);
     }
-    return $count;
-  }
-    function get_csv_content($spreadsheet_url){
-    if(!ini_set('default_socket_timeout', 15)) 
-    echo "<!-- unable to change socket timeout -->";
-    if (($handle = fopen($spreadsheet_url, "r")) !== FALSE) {
-      while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-        $spreadsheet_data[] = $data;
-      }
-      fclose($handle);
-      return $spreadsheet_data;
-    }
-  }
-  
-  function validate_data($data){
-    return true;
-  }
-
   ?>
   <script>
-    function download_table_info() {
-      // const url = <?php echo json_encode($dataURI); ?>;
-      const url = decodeURIComponent("<?php echo rawurlencode($dataURI); ?>");
 
-      window.location = url;
-    }
-    
-    $('button').click(function() {
-      download_table_info();
+    const searchBox = document.getElementsByClassName('search-text')[0],
+          tableBody = document.getElementsByClassName('table-content')[0],
+          data = getFilteredData(<?php echo json_encode($data) ?>);
+
+    data.map(el => {
+      const row = tableBody.insertRow(-1);
+
+      row.classList.add('content-row');
+            
+      const serial = row.insertCell(0),
+            scheme = row.insertCell(1),
+            stateOrCentral = row.insertCell(2),
+            dept = row.insertCell(3),
+            desc = row.insertCell(4),
+            eligiblity = row.insertCell(5),
+            docs = row.insertCell(6),
+            benifits = row.insertCell(7);
+      
+      serial.innerHTML = el[0];
+      scheme.innerHTML = el[1];
+      stateOrCentral.innerHTML = el[2];
+      dept.innerHTML = el[3];
+      desc.innerHTML = el[4];
+      eligiblity.innerHTML = el[5];
+      docs.innerHTML = el[6];
+      benifits.innerHTML = el[7];
     });
 
-    search_table_info.addEventListener('keyup', function($e) {
+    searchBox.addEventListener('keyup', function($e) {
       let cell;
 
       const filter = this.value.toLowerCase();
@@ -155,6 +173,20 @@
       }
     });
 
+    function download_table_info() {
+      const url = decodeURIComponent("<?php echo rawurlencode($dataURI); ?>");
 
+      window.location = url;
+    }
+
+    function getFilteredData(dataArray) {
+      dataArray = dataArray.slice(2);
+
+      return dataArray.map(e => e.slice(1));
+    }
+    
+    $('button').click(function() {
+      download_table_info();
+    });
   </script>
   </body>
