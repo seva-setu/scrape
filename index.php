@@ -15,28 +15,29 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="jumbotron">
+    <div class="container-fluid" style="background-color:#eceff1; margin-left: 0.5em;margin-right: 0.5em;">
+     <!-- <div class="jumbotron">-->
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <a href="http://sevasetu.org/" target="_blank">
-            <img src="http://sevasetu.org/disability_care/img/logo.jpg" width="75" height="100"></a>
+            <img src="http://sevasetu.org/disability_care/img/logo.jpg" width="75" height="100" style="postion: relative;left:7%;margin-top: 0.5em;margin-bottom: 0.5em;"></a>
           </div>
-          <div class="col-md-7">
-            <h1>Seva Setu</h1>
+          <div class="col-md-6">
+            <h1 style="position: relative; margin-top: 3%;font-weight: bold;">Seva Setu</h1>
           </div>
           <div class="col-md-1">
+            <br>
             <h4 class="centerify">
-              <a class="nav-link" href="http://sevasetu.org/contribute-now/" target="_blank">Donate</a>
+              <a class="nav-link" href="http://sevasetu.org/contribute-now/" target="_blank" style="margin-top: 2em;">Donate</a>
             </h4>
             <h4 class="centerify">
-              <a class="nav-link" href="http://sevasetu.org/" target="_blank">About Us</a>
+              <a class="nav-link" href="http://sevasetu.org/" target="_blank" style="margin-top: .5em;">About Us</a>
             </h4>
           </div>
         </div>
-      </div>
+     <!-- </div>-->
     </div>
-    <div class="container">
+    <div class="container-fluid" style="margin-top: 0.5em;">
       <div class="row">
         <div class="col-md-4">
           <form>
@@ -76,6 +77,15 @@
       </thead>
       <tbody class="table-content"></tbody>
     </table>
+    <ul class = "pagination">
+   <li><a href = "#">&laquo;</a></li>
+   <li><a href = "#">1</a></li>
+   <li><a href = "#">2</a></li>
+   <li><a href = "#">3</a></li>
+   <li><a href = "#">4</a></li>
+   <li><a href = "#">5</a></li>
+   <li><a href = "#">&raquo;</a></li>
+</ul>
   </div>  
   <?php
     function get_all_counts($data){
@@ -95,7 +105,7 @@
     }
     
     function get_csv_content($spreadsheet_url){
-      if(!ini_set('default_socket_timeout', 15)) 
+      //if(!ini_set('default_socket_timeout', 15)) 
       echo "<!-- unable to change socket timeout -->";
       if (($handle = fopen($spreadsheet_url, "r")) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
