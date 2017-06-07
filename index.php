@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+    <script src="js/jquery.js"></script>
+    <script src="js/paginate.js"></script>
+    <script src="js/custom.js"></script>
+
     <title>Seva setu</title>
     <style>
       .content-row:hover {
@@ -15,28 +19,29 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="jumbotron">
+    <div class="container-fluid" style="background-color:#eceff1; margin-left: 0.5em;margin-right: 0.5em;">
+     <!-- <div class="jumbotron">-->
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-5">
             <a href="http://sevasetu.org/" target="_blank">
-            <img src="http://sevasetu.org/disability_care/img/logo.jpg" width="75" height="100"></a>
+            <img src="http://sevasetu.org/disability_care/img/logo.jpg" width="75" height="100" style="postion: relative;left:7%;margin-top: 0.5em;margin-bottom: 0.5em;"></a>
           </div>
-          <div class="col-md-7">
-            <h1>Seva Setu</h1>
+          <div class="col-md-6">
+            <h1 style="position: relative; margin-top: 3%;font-weight: bold;">Seva Setu</h1>
           </div>
           <div class="col-md-1">
+            <br>
             <h4 class="centerify">
-              <a class="nav-link" href="http://sevasetu.org/contribute-now/" target="_blank">Donate</a>
+              <a class="nav-link" href="http://sevasetu.org/contribute-now/" target="_blank" style="margin-top: 2em;">Donate</a>
             </h4>
             <h4 class="centerify">
-              <a class="nav-link" href="http://sevasetu.org/" target="_blank">About Us</a>
+              <a class="nav-link" href="http://sevasetu.org/" target="_blank" style="margin-top: .5em;">About Us</a>
             </h4>
           </div>
         </div>
-      </div>
+     <!-- </div>-->
     </div>
-    <div class="container">
+    <div class="container-fluid" style="margin-top: 0.5em;">
       <div class="row">
         <div class="col-md-4">
           <form>
@@ -76,6 +81,9 @@
       </thead>
       <tbody class="table-content"></tbody>
     </table>
+    <div class = "pagination">
+
+    </div>
   </div>  
   <?php
     function get_all_counts($data){
@@ -95,7 +103,6 @@
     }
     
     function get_csv_content($spreadsheet_url){
-      if(!ini_set('default_socket_timeout', 15)) 
       echo "<!-- unable to change socket timeout -->";
       if (($handle = fopen($spreadsheet_url, "r")) !== FALSE) {
         while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
@@ -182,11 +189,47 @@
     function getFilteredData(dataArray) {
       dataArray = dataArray.slice(2);
 
-      return dataArray.map(e => e.slice(1));
+       return dataArray.map(e => e.slice(1));
     }
     
     $('button').click(function() {
       download_table_info();
     });
+    (function($){
+      $.fn.customPaginate = function(options)
+      {
+        var paginationContainer = this;
+        var itemsToPaginate;
+        var defaults ={
+          itemsperpage:20
+        };
+        var settings = {};
+        $.extend(settings,defaults,options);
+        var itemsperpage = settings.itemsperpage;
+        itemsToPaginate=$(settings.itemsToPaginate);
+        var numberofpaginationLinks = Math.ceil(itemsToPaginate.length/itemsperpage);
+        $("<ul></ul>").prependTo(paginationContainer);
+        for(var index=0; index < numberofpaginationLinks; index++)
+        {
+          paginationContainer.find("ul").append("<li>" + (index+1) + "</li>");
+        }
+        itemsToPaginate.filter(":gt(" + (itemsperpage-1)+")").hide();
+        paginationContainer.find("ul li").on('click',function(){
+          var linkNumber=$(this).text();
+          var itemsToHide=itemsToPaginate.filter(":lt("+ ((linkNumber-1)*itemsperpage)+")");
+          $.merge(itemsToHide,itemsToPaginate.filter(":gt("+((linkNumber*itemsperpage)-1)+")"));
+          itemsToHide.hide();
+          var itemsToshow= itemsToPaginate.not(itemsToHide);
+          itemsToshow.show();
+        });
+      }
+    }(jQuery));
+    (function($){
+      $(document).ready(function(){
+        $(".pagination").customPaginate({
+          itemsToPaginate:".table-content"
+        });
+      });
+    }(jQuery));
   </script>
   </body>
